@@ -1,0 +1,7 @@
+// Prod flavor — Release build type
+#include? "../Pods/Target Support Files/Pods-BareCICDtest/Pods-BareCICDtest.release-prod.xcconfig"
+
+ENVFILE=../.env.prod
+
+PRODUCT_NAME = BareCICDtest
+PRODUCT_BUNDLE_IDENTIFIER = com.codeandtheory.templatepipelinetest
