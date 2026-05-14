@@ -1,32 +1,32 @@
-import { useThemedStyles } from "../../theme/useThemedStyles";
+import { useThemedStyles } from '../../theme/useThemedStyles';
 
 export function useMediaPlayerScreenRootStyles(topInset: number) {
   return useThemedStyles(
-    (colors) => ({
+    colors => ({
       root: {
         flex: 1,
         backgroundColor: colors.background,
         paddingTop: topInset,
       },
       tabRow: {
-        flexDirection: "row",
+        flexDirection: 'row',
         marginHorizontal: 16,
         marginBottom: 8,
         borderRadius: 10,
-        overflow: "hidden",
+        overflow: 'hidden',
         backgroundColor: colors.grayBackground,
       },
       tabBtn: {
         flex: 1,
         paddingVertical: 12,
-        alignItems: "center",
+        alignItems: 'center',
       },
       tabBtnActive: {
         backgroundColor: colors.primary,
       },
       tabBtnText: {
         fontSize: 15,
-        fontWeight: "600",
+        fontWeight: '600',
         color: colors.text2,
       },
       tabBtnTextActive: {

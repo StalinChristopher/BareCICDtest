@@ -37,7 +37,9 @@ export function buildLocalVideoSource(absolutePath: string): ReactVideoSource {
   return { uri: fileUriFromPath(absolutePath) };
 }
 
-export function buildRemoteVideoSource(input: MediaPlayerSourceInput): ReactVideoSource {
+export function buildRemoteVideoSource(
+  input: MediaPlayerSourceInput,
+): ReactVideoSource {
   validateHttpUrl(input.uri);
   const base: ReactVideoSource = {
     uri: input.uri,

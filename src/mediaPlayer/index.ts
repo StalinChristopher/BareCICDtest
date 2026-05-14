@@ -8,7 +8,11 @@ export type {
 
 export { DRMType } from './types';
 
-export { buildLocalVideoSource, buildRemoteVideoSource, withDrm } from './buildMediaSource';
+export {
+  buildLocalVideoSource,
+  buildRemoteVideoSource,
+  withDrm,
+} from './buildMediaSource';
 export {
   DEMO_OFFLINE_PROGRESSIVE_MP4_URI,
   OFFLINE_DEMO_FILE_NAME,

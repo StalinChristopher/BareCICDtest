@@ -1,14 +1,10 @@
-import React, { useCallback, useState } from "react";
-import { View, StyleSheet } from "react-native";
-import type {
-  SnackbarConfig,
-  ToastConfig,
-  AlertConfig,
-} from "./types";
-import { Snackbar } from "./Snackbar";
-import { Toast } from "./Toast";
-import { Alert } from "./Alert";
-import { FeedbackManager } from "./FeedbackManager";
+import React, { useCallback, useState } from 'react';
+import { View, StyleSheet } from 'react-native';
+import type { SnackbarConfig, ToastConfig, AlertConfig } from './types';
+import { Snackbar } from './Snackbar';
+import { Toast } from './Toast';
+import { Alert } from './Alert';
+import { FeedbackManager } from './FeedbackManager';
 
 interface FeedbackProviderProps {
   children: React.ReactNode;
@@ -42,7 +38,10 @@ export function FeedbackProvider({ children }: FeedbackProviderProps) {
   return (
     <View style={styles.container}>
       {children}
-      <Snackbar config={snackbarConfig} onDismiss={() => setSnackbarConfig(null)} />
+      <Snackbar
+        config={snackbarConfig}
+        onDismiss={() => setSnackbarConfig(null)}
+      />
       <Toast config={toastConfig} onDismiss={() => setToastConfig(null)} />
       <Alert config={alertConfig} onDismiss={() => setAlertConfig(null)} />
     </View>

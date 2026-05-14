@@ -45,16 +45,23 @@ export async function showDownloadProgressNotification(
     const id = notificationId(itemId);
     const hasTotal = progress.bytesExpected > 0;
     const max = hasTotal ? progress.bytesExpected : 100;
-    const current = hasTotal ? Math.min(progress.bytesWritten, max) : Math.min(progress.bytesWritten, 100);
+    const current = hasTotal
+      ? Math.min(progress.bytesWritten, max)
+      : Math.min(progress.bytesWritten, 100);
     const pct = hasTotal
-      ? Math.min(100, Math.round((100 * progress.bytesWritten) / progress.bytesExpected))
+      ? Math.min(
+          100,
+          Math.round((100 * progress.bytesWritten) / progress.bytesExpected),
+        )
       : 0;
 
     await notifee.displayNotification({
       id,
       title: title.slice(0, 80),
       body: hasTotal
-        ? `${pct}% · ${formatBytes(progress.bytesWritten)} / ${formatBytes(progress.bytesExpected)}`
+        ? `${pct}% · ${formatBytes(progress.bytesWritten)} / ${formatBytes(
+            progress.bytesExpected,
+          )}`
         : `${formatBytes(progress.bytesWritten)} downloaded`,
       android: {
         channelId: ANDROID_CHANNEL_ID,

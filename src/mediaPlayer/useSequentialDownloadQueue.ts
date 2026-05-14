@@ -18,7 +18,13 @@ import type { CatalogItem } from './downloadCatalog';
 import { getQueuedVideosDirectory } from './downloadQueuePaths';
 import type { DownloadProgress } from './types';
 
-export type QueueItemStatus = 'idle' | 'queued' | 'downloading' | 'paused' | 'downloaded' | 'error';
+export type QueueItemStatus =
+  | 'idle'
+  | 'queued'
+  | 'downloading'
+  | 'paused'
+  | 'downloaded'
+  | 'error';
 
 export type QueueItemRow = Readonly<{
   id: string;
@@ -34,9 +40,11 @@ export type QueueItemRow = Readonly<{
   totalBytesExpected: number | null;
 }>;
 
-function pickNextQueued(rows: readonly QueueItemRow[]): QueueItemRow | undefined {
+function pickNextQueued(
+  rows: readonly QueueItemRow[],
+): QueueItemRow | undefined {
   return rows
-    .filter((r) => r.status === 'queued')
+    .filter(r => r.status === 'queued')
     .sort((a, b) => (a.queuedAt ?? 0) - (b.queuedAt ?? 0))[0];
 }
 
@@ -56,7 +64,7 @@ export function useSequentialDownloadQueue(catalog: readonly CatalogItem[]) {
   const lastNotifRef = useRef({ t: 0, written: -1 });
 
   const queueSignature = useMemo(
-    () => rows.map((r) => `${r.id}:${r.status}`).join('|'),
+    () => rows.map(r => `${r.id}:${r.status}`).join('|'),
     [rows],
   );
 
@@ -79,7 +87,7 @@ export function useSequentialDownloadQueue(catalog: readonly CatalogItem[]) {
       const dir = getQueuedVideosDirectory();
       await ensureDirectoryExists(dir);
       const nextRows: QueueItemRow[] = await Promise.all(
-        catalog.map(async (c) => {
+        catalog.map(async c => {
           const localPath = `${dir}/${c.fileName}`;
           const exists = await mediaFileExists(localPath);
           return {
@@ -129,7 +137,7 @@ export function useSequentialDownloadQueue(catalog: readonly CatalogItem[]) {
       return;
     }
     const snap = rowsRef.current;
-    if (snap.some((r) => r.status === 'downloading')) {
+    if (snap.some(r => r.status === 'downloading')) {
       return;
     }
     const next = pickNextQueued(snap);
@@ -138,13 +146,20 @@ export function useSequentialDownloadQueue(catalog: readonly CatalogItem[]) {
     }
 
     workingRef.current = true;
-    const { id, url, fileName, localPath, title, totalBytesExpected: priorTotal } = next;
+    const {
+      id,
+      url,
+      fileName,
+      localPath,
+      title,
+      totalBytesExpected: priorTotal,
+    } = next;
     const queueDir = getQueuedVideosDirectory();
     activeDownloadIdRef.current = id;
     lastNotifRef.current = { t: 0, written: -1 };
 
-    setRows((prev) =>
-      prev.map((r) =>
+    setRows(prev =>
+      prev.map(r =>
         r.id === id
           ? { ...r, status: 'downloading', progress: null, errorMessage: null }
           : r,
@@ -163,18 +178,20 @@ export function useSequentialDownloadQueue(catalog: readonly CatalogItem[]) {
       fileName,
       unlinkDestinationOnCancel: false,
       knownContentLength: priorTotal,
-      onProgress: (p) => {
+      onProgress: p => {
         if (disposedRef.current) {
           return;
         }
-        setRows((prev) =>
-          prev.map((r) =>
+        setRows(prev =>
+          prev.map(r =>
             r.id === id
               ? {
                   ...r,
                   progress: p,
                   totalBytesExpected:
-                    p.bytesExpected > 0 ? p.bytesExpected : r.totalBytesExpected,
+                    p.bytesExpected > 0
+                      ? p.bytesExpected
+                      : r.totalBytesExpected,
                 }
               : r,
           ),
@@ -190,8 +207,8 @@ export function useSequentialDownloadQueue(catalog: readonly CatalogItem[]) {
         return;
       }
       void showDownloadFinishedNotification(id, title, true);
-      setRows((prev) =>
-        prev.map((r) =>
+      setRows(prev =>
+        prev.map(r =>
           r.id === id
             ? {
                 ...r,
@@ -212,8 +229,8 @@ export function useSequentialDownloadQueue(catalog: readonly CatalogItem[]) {
         userPauseRef.current = false;
         await deleteResumeSidecarsForDestination(localPath).catch(() => {});
         void showDownloadPausedNotification(id, title);
-        setRows((prev) =>
-          prev.map((r) =>
+        setRows(prev =>
+          prev.map(r =>
             r.id === id
               ? {
                   ...r,
@@ -231,8 +248,8 @@ export function useSequentialDownloadQueue(catalog: readonly CatalogItem[]) {
         await deleteResumeSidecarsForDestination(localPath).catch(() => {});
         void showDownloadFinishedNotification(id, title, false);
         const msg = e instanceof Error ? e.message : 'Download failed';
-        setRows((prev) =>
-          prev.map((r) =>
+        setRows(prev =>
+          prev.map(r =>
             r.id === id
               ? {
                   ...r,
@@ -258,8 +275,8 @@ export function useSequentialDownloadQueue(catalog: readonly CatalogItem[]) {
   }, [queueSignature, rowsReady, runWorker]);
 
   const enqueue = useCallback((id: string) => {
-    setRows((prev) =>
-      prev.map((r) => {
+    setRows(prev =>
+      prev.map(r => {
         if (r.id !== id) {
           return r;
         }

@@ -11,6 +11,6 @@ export const FontWeightToken = {
   'label-light': 500,
   'label-medium': 500,
   'label-regular': 400,
-  'label-semibold': 500
+  'label-semibold': 500,
 } as const;
 export type FontWeightTokenKey = keyof typeof FontWeightToken;

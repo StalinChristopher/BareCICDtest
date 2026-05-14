@@ -53,7 +53,10 @@ export function resumeChunkPathForDestination(destPath: string): string {
   return `${destPath}.rnresume`;
 }
 
-function getHeader(headers: Record<string, unknown>, name: string): string | undefined {
+function getHeader(
+  headers: Record<string, unknown>,
+  name: string,
+): string | undefined {
   const lower = name.toLowerCase();
   for (const k of Object.keys(headers)) {
     if (k.toLowerCase() === lower) {
@@ -64,7 +67,9 @@ function getHeader(headers: Record<string, unknown>, name: string): string | und
   return undefined;
 }
 
-function parseTotalFromContentRange(contentRange: string | undefined): number | null {
+function parseTotalFromContentRange(
+  contentRange: string | undefined,
+): number | null {
   if (!contentRange) {
     return null;
   }
@@ -77,7 +82,9 @@ function parseTotalFromContentRange(contentRange: string | undefined): number | 
 }
 
 /** Creates a directory if it does not exist (single path segment or flat nested path). */
-export async function ensureDirectoryExists(directoryPath: string): Promise<void> {
+export async function ensureDirectoryExists(
+  directoryPath: string,
+): Promise<void> {
   assertNonEmpty(directoryPath, 'directoryPath');
   const normalized = directoryPath.replace(/\/$/, '');
   if (await ReactNativeBlobUtil.fs.exists(normalized)) {
@@ -99,7 +106,9 @@ export async function deleteMediaFile(absolutePath: string): Promise<void> {
   }
 }
 
-export async function deleteResumeSidecarsForDestination(destPath: string): Promise<void> {
+export async function deleteResumeSidecarsForDestination(
+  destPath: string,
+): Promise<void> {
   const chunk = resumeChunkPathForDestination(destPath);
   if (await ReactNativeBlobUtil.fs.exists(chunk)) {
     await ReactNativeBlobUtil.fs.unlink(chunk);
@@ -107,7 +116,10 @@ export async function deleteResumeSidecarsForDestination(destPath: string): Prom
 }
 
 type BlobFetchTask = {
-  progress: (interval: { interval: number }, fn: (received: number, total: number) => void) => void;
+  progress: (
+    interval: { interval: number },
+    fn: (received: number, total: number) => void,
+  ) => void;
   cancel: (callback?: (reason?: string) => void) => void;
 } & Promise<unknown>;
 
@@ -144,7 +156,8 @@ export function downloadProgressiveVideoCancellable(
     await ReactNativeBlobUtil.fs.unlink(chunkPath).catch(() => {});
 
     let knownTotal: number | null =
-      options.knownContentLength === undefined || options.knownContentLength === null
+      options.knownContentLength === undefined ||
+      options.knownContentLength === null
         ? null
         : options.knownContentLength;
 
@@ -156,10 +169,13 @@ export function downloadProgressiveVideoCancellable(
         knownTotal !== null && knownTotal > 0
           ? knownTotal
           : bytesExpectedHint > 0
-            ? bytesExpectedHint
-            : bytesWritten;
+          ? bytesExpectedHint
+          : bytesWritten;
       options.onProgress({
-        bytesWritten: knownTotal !== null ? Math.min(bytesWritten, knownTotal) : bytesWritten,
+        bytesWritten:
+          knownTotal !== null
+            ? Math.min(bytesWritten, knownTotal)
+            : bytesWritten,
         bytesExpected,
       });
     };
@@ -171,7 +187,9 @@ export function downloadProgressiveVideoCancellable(
       }
 
       const destExists = await ReactNativeBlobUtil.fs.exists(destPath);
-      const offset = destExists ? (await ReactNativeBlobUtil.fs.stat(destPath)).size : 0;
+      const offset = destExists
+        ? (await ReactNativeBlobUtil.fs.stat(destPath)).size
+        : 0;
 
       if (knownTotal !== null && knownTotal > 0 && offset >= knownTotal) {
         await ReactNativeBlobUtil.fs.unlink(chunkPath).catch(() => {});
@@ -247,12 +265,18 @@ export function downloadProgressiveVideoCancellable(
         await ReactNativeBlobUtil.fs.unlink(chunkPath).catch(() => {});
         const sizeAfter = (await ReactNativeBlobUtil.fs.stat(destPath)).size;
         if (sizeAfter <= sizeBefore) {
-          throw new Error('mediaPlayer download: no bytes appended (range unsupported?)');
+          throw new Error(
+            'mediaPlayer download: no bytes appended (range unsupported?)',
+          );
         }
         if (knownTotal !== null && knownTotal > 0 && sizeAfter >= knownTotal) {
           return { path: destPath };
         }
-        if (knownTotal === null && parsedTotal !== null && sizeAfter >= parsedTotal) {
+        if (
+          knownTotal === null &&
+          parsedTotal !== null &&
+          sizeAfter >= parsedTotal
+        ) {
           return { path: destPath };
         }
         if (knownTotal === null) {
