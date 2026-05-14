@@ -11,7 +11,7 @@ interface SnackbarProps {
 export function Snackbar({ config, onDismiss }: SnackbarProps) {
   const insets = useSafeAreaInsets();
   const [animation] = useState(new Animated.Value(0));
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const dismissSnackbar = useCallback(() => {
     Animated.timing(animation, {
